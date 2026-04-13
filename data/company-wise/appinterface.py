@@ -15,7 +15,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 #import pandas_datareader as data
 import streamlit as st
-#from datetime import datetime
+import datetime
 from sklearn.preprocessing import MinMaxScaler
 import os
 #from keras.models import load_model
@@ -26,8 +26,8 @@ st.set_page_config(page_title="MarketLens Python", layout = 'centered' )
 st.title("📈MarketLens: Stock Market Data Analysis and Prediction App")
 
 
-start = st.datetime_input("Enter the initial date:")
-end = st.datetime_input("Enter the later date:")
+start = st.datetime_input("Enter the initial date:", min_value= datetime.datetime(2008,12,1,18,45), max_value="now")
+end = st.datetime_input("Enter the later date:", min_value= datetime.datetime(2008,12,1,18,45), max_value="now")
 
 
 user_input = st.text_input("Enter Stock Ticker eg: NABIL")
