@@ -18,7 +18,7 @@ import streamlit as st
 #from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 import os
-from keras.models import load_model
+#from keras.models import load_model
 #from pathlib import Path
 
 st.set_page_config(page_title="MarketLens Python", layout = 'centered' )
@@ -89,7 +89,7 @@ scaler = MinMaxScaler(feature_range = (0,1))
 data_training_array = scaler.fit_transform(data_training)
 
 #load the training model
-model = load_model('LSTM_model')
+#model = load_model('LSTM_model')
 
 #testing part
 past_100_days = data_training.tail(100)
