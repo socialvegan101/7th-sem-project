@@ -26,6 +26,8 @@ jobs:
         run: git config --local user.email "sumeedimarahatta@gmail.com" && git config --local user.name "socialvegan101"
       - name: Commit Files
         run: git add ../data && git commit -m "Update data"
+      - name: Pull latest changes
+        run: git pull origin master
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
