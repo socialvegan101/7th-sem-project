@@ -1,7 +1,6 @@
 # stock prediction
 this project is intended to provide the real time prediction of the stock price(close) through the use of linear regression model. Also a sseparate model with RELU activation function has been prepared to utilize the LSTM feature in the data prediction. 
 
-
 # nepse-data
 all the datasets (from past to present) of various companies listed in the Nepal Stock Market can be found. 
 
