@@ -1,6 +1,6 @@
 #   ML Model
 from keras.layers import Dense, Dropout, LSTM
-from keras.modeld import Sequential
+from keras.model import Sequential
 
 model = Sequential()
 model.add(LSTM(units = 50, activation = 'relu', return_sequences = True,input_shape = (x_train.shape[1],1) ))

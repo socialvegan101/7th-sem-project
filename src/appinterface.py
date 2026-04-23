@@ -7,17 +7,17 @@
         model ready vayo(linear regression)
 
         REMAININGS:
-        x ra y label dekhaayena idk why. gotta look into that
         login page banauna baaki
 """
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-#import pandas_datareader as data
+import matplotlib.dates as mdates
+import regressionModel as rm
 import streamlit as st
 import datetime
 from sklearn.preprocessing import MinMaxScaler
-import plotly.graph_objects as go
+#import plotly.graph_objects as go
 import os
 #from keras.models import load_model
 #from pathlib import Path
@@ -25,6 +25,17 @@ import os
 st.set_page_config(page_title="MarketLens Python", layout = 'centered' )
 
 st.title("📈MarketLens: Stock Market Data Analysis and Prediction App")
+
+# Sidebar
+st.sidebar.header("User Menu")
+if st.sidebar.button("Login"):
+    st.sidebar.success("Logged in as User")
+
+# History Section
+st.sidebar.markdown("---")
+st.sidebar.subheader("Your History")
+st.sidebar.text("1. Searched NABIL (2026-04-23)")
+st.sidebar.text("2. Predicted NABIL: Rs. 521.27")
 
 
 start = st.datetime_input("Enter the initial date:", min_value= datetime.datetime(2008,12,1,18,45), max_value="now")
@@ -153,50 +164,7 @@ y_test = y_test * scale_factor
 # st.pyplot(fig2)
 
 
-# # --- Custom Linear Regression (From Scratch) ---
-class CustomLinearRegression:
-    def __init__(self, lr=0.01, iterations=1000):
-        self.lr = lr
-        self.iterations = iterations
-        self.weights = None
-        self.bias = None
-        self.n_features = None
-
-    def fit(self, X, y):
-        X = np.array(X)
-        y = np.array(y)
-
-        n_samples, n_features = X.shape
-        self.n_features = n_features
-
-        self.weights = np.zeros(n_features)
-        self.bias = 0
-
-        for _ in range(self.iterations):
-            y_pred = np.dot(X, self.weights) + self.bias
-
-            dw = (1 / n_samples) * np.dot(X.T, (y_pred - y))
-            db = (1 / n_samples) * np.sum(y_pred - y)
-
-            self.weights -= self.lr * dw
-            self.bias -= self.lr * db
-
-    def predict(self, X):
-        X = np.array(X)
-
-        # FIX: ensure correct shape
-        if X.ndim == 1:
-            X = X.reshape(1, -1)
-
-        # safety check (prevents your exact error)
-        if X.shape[1] != self.n_features:
-            raise ValueError(
-                f"Feature mismatch! Model expects {self.n_features}, "
-                f"but got {X.shape[1]}"
-            )
-        return np.dot(X, self.weights) + self.bias
-
- # Prediction Logic
+# Prediction Logic for linear regression model
 st.subheader("Next Day Prediction")
 if st.button("Predict Closing Price(using linear regression)"):
     # Training on the 100 rows in csv
@@ -210,9 +178,31 @@ if st.button("Predict Closing Price(using linear regression)"):
     X_norm = (X - X_mean) / X_std
         
     # Train model
-    model = CustomLinearRegression(lr=0.1, iterations=2000)
+    model = rm.CustomLinearRegression(lr=0.1, iterations=2000)
     model.fit(X_norm, y)
-        
+
+    #  work in progress!!!   maathi ko copy gareko 
+    # #    testing part
+    # past_100_days = data_training.tail(100)
+    # final_df = pd.concat([past_100_days, data_testing], ignore_index=True)
+    # input_data = scaler.fit_transform(final_df)
+
+    # data = np.array(input_data).astype(float)
+
+
+    # x_test = []
+    # y_test = []
+
+    # for i in range(100,data.shape[0]):
+    #     x = data[i-100:i].reshape(100,1)
+    #     x_test.append(x)
+    #     y_test.append(data[i,0])     #i,0 in sense close column 1st maa xa vanera, here date is 5th col in csv file
+
+
+    # x_test = np.array(x_test)
+    # y_test = np.array(y_test)
+
+    #yaa baata mandatory code    
     # Predict using 100 days data
     last_day = X_norm[-1].reshape(1, -1)
     x_test_linear_regression = x_test.reshape(x_test.shape[0], -1)
@@ -220,11 +210,14 @@ if st.button("Predict Closing Price(using linear regression)"):
   
 
     #final graph
-    st.subheader('Predicted vs original')
+    st.subheader('Predicted vs original for last 100 days')
+    ax = plt.subplot()
     fig3 = plt.figure(figsize=(12,6))
-    #plt.plot(df.published_date, df.close)
+    #plt.plot(df_last_100.published_date, df.close)
+    # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d-%b'))
+    # ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
     plt.plot(prediction,'b', label = 'predicted price')
-    plt.plot(y_test,'r', label = 'original price')
+    plt.plot(y, 'r', label = 'original price')
     plt.xlabel('Time')
     plt.ylabel('Price')
     plt.legend()
