@@ -34,8 +34,9 @@ if st.sidebar.button("Login"):
 # History Section
 st.sidebar.markdown("---")
 st.sidebar.subheader("Your History")
-st.sidebar.text("1. Searched NABIL (2026-04-23)")
-st.sidebar.text("2. Predicted NABIL: Rs. 521.27")
+# st.sidebar.text("1. Searched NABIL (2026-04-23)")
+# st.sidebar.text("2. Predicted NABIL: Rs. 521.27")
+st.sidebar.text("Log in to see your history")
 
 
 start = st.datetime_input("Enter the initial date:", min_value= datetime.datetime(2008,12,1,18,45), max_value="now")
