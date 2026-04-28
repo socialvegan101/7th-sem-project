@@ -8,6 +8,11 @@
 
         REMAININGS:
         login page banauna baaki
+
+        should we make another model with RELU activation function?
+        if yes this model will use pre built LSTM model and we'll train it using 5 training layers.
+        this model will have better accuracy than the linear regression model because it will capture the non-linear
+        relationship between the data.
 """
 import numpy as np
 import pandas as pd
@@ -43,7 +48,15 @@ start = st.datetime_input("Enter the initial date:", min_value= datetime.datetim
 end = st.datetime_input("Enter the later date:", min_value= datetime.datetime(2008,12,1,18,45), max_value="now")
 
 
-user_input = st.text_input("Enter Stock Ticker eg: NABIL")
+values = ["ADBL","AHPC","AKJCL","AKPL","ALICL","API","BARUN","BFC","BOKL","BPCL","CBL","CCBL","CFCL","CGH","CHCL","CHDC","CHL",
+          "CIT","CORBL","CZBIL","DHPL","EBL","EDBL","GBBL","GBIME","GFCL","GHL","GLH","GLICL","GMFIL","GRDBL","GUFL","HBL","HDHPC",
+          "HIDCL","HPPL","HURJA","ICFC","JBBL","JFL","JLI","JOSHI","KBL","KKHC","KPCL","KRBL","KSBBL","LBBL","LBL","LEC","LICN","MBL",
+          "MDB","MEGA","MEN","MFIL","MHNL","MKJC","MLBL","MNBBL","MPFL","NABBC","NABIL","NBB","NBL","NCCB","NFS","NGPL","NHDL","NHPC",
+          "NIB","NICA","NIFRA","NLIC","NLICL","NMB","NRN","NYADI","OHL","PCBL","PFL","PLI","PLIC","PMHPL","PPCL","PROFL","PRVU","RADHI",
+          "RHPC","RHPL","RLFL","RLI","RRHP","RURU","SADBL","SAHAS","SANIMA","SAPDBL","SBI","SBL","SCB","SFCL","SHBL","SHEL","SHINE",
+          "SHL","SHPC","SIFC","SINDU","SJCL","SLI","SLICL","SPC","SPDL","SRBL","SSHL","TPC","TRH","ULI","UMHL","UMRH","UNHPL","UPCL",
+          "UPPER"]
+user_input = st.selectbox("Enter Stock Ticker eg: NABIL", values)
 input = user_input + ".csv"
 st.subheader(f"Data from {start} to {end}")
 
