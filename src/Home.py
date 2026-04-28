@@ -13,6 +13,12 @@
         if yes this model will use pre built LSTM model and we'll train it using 5 training layers.
         this model will have better accuracy than the linear regression model because it will capture the non-linear
         relationship between the data.
+
+        ABA K GARNE??
+        1. move the codes to the respective files so that it becomes a multiple page application
+        2. profile maa gayera herdaa history dekhaune chaiyo
+        3. predictions store garne DB chaiyo
+
 """
 import numpy as np
 import pandas as pd
@@ -69,7 +75,6 @@ df = pd.read_csv(base_path +"\\"+ input)
 # Save as a comma-delimited text file
 df.to_csv(f'{user_input}.txt', sep=',', index=False)
 
-#df = np.genfromtxt("ADBL.txt", delimiter = ',' ,skip_header=1)
 
 df["published_date"] = pd.to_datetime(df["published_date"])
 df1 = df[df["published_date"].between(start,end)]
