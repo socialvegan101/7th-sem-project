@@ -25,7 +25,12 @@ jobs:
       - name: Setup Git
         run: git config --local user.email "sumeedimarahatta@gmail.com" && git config --local user.name "socialvegan101"
       - name: Commit Files
-        run: git add ../data && git commit -m "Update data"
+        run: |
+          if ! git diff --cached --quiet; then
+            git add ../data && git commit -m "Update data"
+          else
+            echo "No changes to commit"
+          fi
       - name: Pull latest changes
         run: git pull origin master
       - name: Push changes
