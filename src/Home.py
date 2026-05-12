@@ -37,10 +37,10 @@ st.set_page_config(page_title="MarketLens Python", layout = 'centered' )
 
 st.title("📈MarketLens: Stock Market Data Analysis and Prediction App")
 
-# Sidebar
-st.sidebar.header("User Menu")
-if st.sidebar.button("Login"):
-    st.sidebar.success("Logged in as User")
+# # Sidebar
+# st.sidebar.header("User Menu")
+# if st.sidebar.button("Login"):
+#     st.sidebar.success("Logged in as User")
 
 # History Section
 st.sidebar.markdown("---")
@@ -184,21 +184,21 @@ y_test = y_test * scale_factor
 
 
 # Prediction Logic for linear regression model
-st.subheader("Next Day Prediction")
-if st.button("Predict Closing Price(using linear regression)"):
-    # Training on the 100 rows in csv
-    df_last_100 = df.tail(100)
-    X = df_last_100[['open', 'high', 'low', 'traded_quantity']].values
-    y = df_last_100['close'].values
+# st.subheader("Next Day Prediction")
+# if st.button("Predict Closing Price(using linear regression)"):
+#     # Training on the 100 rows in csv
+#     df_last_100 = df.tail(100)
+#     X = df_last_100[['open', 'high', 'low', 'traded_quantity']].values
+#     y = df_last_100['close'].values
         
-    # Normalize
-    X_mean = np.mean(X, axis=0)
-    X_std = np.std(X, axis=0)
-    X_norm = (X - X_mean) / X_std
+#     # Normalize
+#     X_mean = np.mean(X, axis=0)
+#     X_std = np.std(X, axis=0)
+#     X_norm = (X - X_mean) / X_std
         
-    # Train model
-    model = rm.CustomLinearRegression(lr=0.1, iterations=2000)
-    model.fit(X_norm, y)
+#     # Train model
+#     model = rm.CustomLinearRegression(lr=0.1, iterations=2000)
+#     model.fit(X_norm, y)
 
     #  work in progress!!!   maathi ko copy gareko 
     # #    testing part
@@ -223,24 +223,28 @@ if st.button("Predict Closing Price(using linear regression)"):
 
     #yaa baata mandatory code    
     # Predict using 100 days data
-    last_day = X_norm[-1].reshape(1, -1)
-    x_test_linear_regression = x_test.reshape(x_test.shape[0], -1)
-    prediction = model.predict(last_day)
+    # last_day = X_norm[-1].reshape(1, -1)
+    # x_test_linear_regression = x_test.reshape(x_test.shape[0], -1)
+    # prediction = model.predict(last_day)
   
 
     #final graph
-    st.subheader('Predicted vs original for last 100 days')
-    ax = plt.subplot()
-    fig3 = plt.figure(figsize=(12,6))
+    # st.subheader('Predicted vs original for last 100 days')
+    # ax = plt.subplot()
+    # fig3 = plt.figure(figsize=(12,6))
+
+
     #plt.plot(df_last_100.published_date, df.close)
     # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d-%b'))
     # ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
-    plt.plot(prediction,'b', label = 'predicted price')
-    plt.plot(y, 'r', label = 'original price')
-    plt.xlabel('Time')
-    plt.ylabel('Price')
-    plt.legend()
-    st.pyplot(fig3)
+
+
+    # plt.plot(prediction,'b', label = 'predicted price')
+    # plt.plot(y, 'r', label = 'original price')
+    # plt.xlabel('Time')
+    # plt.ylabel('Price')
+    # plt.legend()
+    # st.pyplot(fig3)
         
-    st.metric("Predicted Close", f"Rs.{prediction[0]:.2f}")
+    # st.metric("Predicted Close", f"Rs.{prediction[0]:.2f}")
 
