@@ -2,16 +2,15 @@ import streamlit as st
 import mysql.connector
 from datetime import datetime
 import Home as h
-# from pages import Predict_Close as pc
 
-# ---------------- DATABASE CONFIG ----------------
+#db configuration
 DB_HOST = "localhost"
 DB_NAME = "user_data"
 DB_USER = "root"
 DB_PASSWORD = ""
 
 
-# ---------------- DB CONNECTION ----------------
+#db connection
 def get_connection():
     return mysql.connector.connect(
         host=DB_HOST,
@@ -21,7 +20,7 @@ def get_connection():
     )
 
 
-# ---------------- CREATE HISTORY TABLE ----------------
+#create history table
 def create_history_table():
     conn = get_connection()
     cur = conn.cursor()
@@ -43,14 +42,14 @@ def create_history_table():
 
 create_history_table()
 
-# ---------------- PAGE CONFIG ----------------
+#main page(third)
 st.set_page_config(
     page_title="Prediction History",
     page_icon="📜",
     layout="wide"
 )
 
-# ---------------- CUSTOM CSS ----------------
+# custom css
 st.markdown("""
 <style>
 
@@ -72,21 +71,21 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- AUTH CHECK ----------------
+#authentication check
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 if "username" not in st.session_state:
     st.session_state.username = ""
 
-# ---------------- BLOCK ACCESS ----------------
+#block access if not logged in
 if not st.session_state.logged_in:
 
     st.error("⚠️ Please login first to access prediction history.")
 
     st.stop()
 
-# ---------------- PAGE HEADER ----------------
+# page header
 st.title("📜 Prediction History Dashboard")
 
 st.success(
@@ -112,7 +111,7 @@ conn.commit()
 cur.close()
 conn.close()
 
-# ---------------- FETCH HISTORY ----------------
+#fetch history
 conn = get_connection()
 cur = conn.cursor()
 
@@ -128,7 +127,7 @@ history = cur.fetchall()
 cur.close()
 conn.close()
 
-# ---------------- DASHBOARD METRICS ----------------
+#dashbord
 total_predictions = len(history)
 
 col1, col2 = st.columns(2)
@@ -151,7 +150,7 @@ with col2:
 
 st.write("")
 
-# ---------------- DISPLAY HISTORY ----------------
+#display previous predictions(history)
 if history:
 
     st.subheader("📊 Your Previous Prediction Requests")
@@ -177,31 +176,3 @@ if history:
 else:
 
     st.info("No prediction history found.")
-
-# # ---------------- OPTIONAL TEST BUTTON ----------------
-# # This simulates prediction requests for testing
-
-# if st.button("Generate Sample Prediction"):
-
-#     conn = get_connection()
-#     cur = conn.cursor()
-
-#     cur.execute("""
-#         INSERT INTO prediction_history
-#         (username, stock_name, prediction, requested_at)
-#         VALUES (%s, %s, %s, %s)
-#     """, (
-#         st.session_state.username,
-#         h.user_input,
-#         f"Rs.{pc.prediction[0]:.2f}",
-#         datetime.now()
-#     ))
-
-#     conn.commit()
-
-#     cur.close()
-#     conn.close()
-
-#     st.success("Sample prediction added!")
-
-#     st.rerun()

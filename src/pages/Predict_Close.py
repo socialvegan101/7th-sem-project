@@ -11,15 +11,14 @@ import Home as h
 import mysql.connector
 import bcrypt
 
-# ---------------- PAGE CONFIG ----------------
+# Page configuration
 st.set_page_config(
     page_title="Login to Predict",
     page_icon="🔐",
     layout="centered"
 )
 
-# ---------------- DATABASE CONNECTION ----------------
-# Replace with your PostgreSQL credentials
+# DB connection
 
 DB_HOST = "localhost"
 DB_NAME = "user_data"
@@ -35,7 +34,7 @@ def get_connection():
         database=DB_NAME
     )
 
-# ---------------- CREATE TABLE ----------------
+# create table
 def create_users_table():
     conn = get_connection()
     cur = conn.cursor()
@@ -56,7 +55,7 @@ def create_users_table():
 
 create_users_table()
 
-# ---------------- PASSWORD HASHING ----------------
+# password hashing
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
@@ -65,7 +64,7 @@ def verify_password(password, hashed_password):
     return bcrypt.checkpw(password.encode(), hashed_password.encode())
 
 
-# ---------------- REGISTER USER ----------------
+# register user
 def register_user(username, email, password):
     try:
         conn = get_connection()
@@ -90,7 +89,7 @@ def register_user(username, email, password):
         return False
 
 
-# ---------------- LOGIN USER ----------------
+# login user
 def login_user(username, password):
     conn = get_connection()
     cur = conn.cursor()
@@ -114,14 +113,14 @@ def login_user(username, password):
     return False
 
 
-# ---------------- SESSION STATE ----------------
+# session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 if "username" not in st.session_state:
     st.session_state.username = ""
 
-# ---------------- CUSTOM CSS ----------------
+# custom css
 st.markdown("""
 <style>
 .main {
@@ -152,13 +151,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- MAIN APP ----------------
+# main page(second one)
 st.title("You can now predict")
 
 menu = ["Login", "Register"]
 choice = st.sidebar.selectbox("Menu", menu)
 
-# ---------------- REGISTER ----------------
+#register
 if choice == "Register":
 
     st.markdown('<div class="auth-box">', unsafe_allow_html=True)
@@ -188,7 +187,7 @@ if choice == "Register":
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------------- LOGIN ----------------
+#login
 elif choice == "Login":
 
     if not st.session_state.logged_in:
@@ -232,7 +231,7 @@ elif choice == "Login":
 
         st.markdown("""
         <div class="feature-card">
-            <h4>🤖 AI Predictions</h4>
+            <h4>AI Predictions</h4>
             <p>AI-powered forecasting tools.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -244,7 +243,7 @@ elif choice == "Login":
         </div>
         """, unsafe_allow_html=True)
 
-        #Prediction ko laagi buttons
+        #buttons for prediction
         st.sidebar.header("Predict the next day's closing")
 
         # Prediction Logic for linear regression model
@@ -263,32 +262,7 @@ elif choice == "Login":
             # Train model
             model = rm.CustomLinearRegression(lr=0.1, iterations=2000)
             model.fit(X_norm, y)
-
-            #  work in progress!!!   maathi ko copy gareko 
-            # #    testing part
-            # past_100_days = data_training.tail(100)
-            # final_df = pd.concat([past_100_days, data_testing], ignore_index=True)
-            # input_data = scaler.fit_transform(final_df)
-
-            # data = np.array(input_data).astype(float)
-
-
-            # x_test = []
-            # y_test = []
-
-            # for i in range(100,data.shape[0]):
-            #     x = data[i-100:i].reshape(100,1)
-            #     x_test.append(x)
-            #     y_test.append(data[i,0])     #i,0 in sense close column 1st maa xa vanera, here date is 5th col in csv file
-
-
-            # x_test = np.array(x_test)
-            # y_test = np.array(y_test)
-
-            #yaa baata mandatory code    
-            # Predict using 100 days data
             last_day = X_norm[-1].reshape(1, -1)
-            #x_test_linear_regression = x_test.reshape(x_test.shape[0], -1)
             prediction = model.predict(last_day)
             st.session_state["prediction"] = prediction
         
@@ -297,16 +271,12 @@ elif choice == "Login":
             st.subheader('Predicted vs original for last 100 days')
             ax = plt.subplot()
             fig3 = plt.figure(figsize=(12,6))
-            #plt.plot(df_last_100.published_date, df.close)
-            # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d-%b'))
-            # ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
             plt.plot(prediction,'b', label = 'predicted price')
             plt.plot(y, 'r', label = 'original price')
             plt.xlabel('Time')
             plt.ylabel('Price')
             plt.legend()
             st.pyplot(fig3)
-        # st.write(prediction)
             st.metric("Predicted Close", f"Rs.{prediction[0]:.2f}")
 
         if st.button("Predict Closing Price(using LSTM Model)"):
@@ -371,127 +341,3 @@ elif choice == "Login":
             st.session_state.logged_in = False
             st.session_state.username = ""
             st.rerun()
-
-
-# #  yaa dekhi ko code lai LOGOUT ko part vanda agaadi haalne
-# st.sidebar.header("Predict the next day's closing")
-
-# # Prediction Logic for linear regression model
-# st.subheader("Next Day Prediction")
-# if st.button("Predict Closing Price(using linear regression)"):
-#     # Training on the 100 rows in csv
-#     df_last_100 = h.df.tail(100)
-#     X = df_last_100[['open', 'high', 'low', 'traded_quantity']].values
-#     y = df_last_100['close'].values
-        
-#     # Normalize
-#     X_mean = np.mean(X, axis=0)
-#     X_std = np.std(X, axis=0)
-#     X_norm = (X - X_mean) / X_std
-        
-#     # Train model
-#     model = rm.CustomLinearRegression(lr=0.1, iterations=2000)
-#     model.fit(X_norm, y)
-
-#     #  work in progress!!!   maathi ko copy gareko 
-#     # #    testing part
-#     # past_100_days = data_training.tail(100)
-#     # final_df = pd.concat([past_100_days, data_testing], ignore_index=True)
-#     # input_data = scaler.fit_transform(final_df)
-
-#     # data = np.array(input_data).astype(float)
-
-
-#     # x_test = []
-#     # y_test = []
-
-#     # for i in range(100,data.shape[0]):
-#     #     x = data[i-100:i].reshape(100,1)
-#     #     x_test.append(x)
-#     #     y_test.append(data[i,0])     #i,0 in sense close column 1st maa xa vanera, here date is 5th col in csv file
-
-
-#     # x_test = np.array(x_test)
-#     # y_test = np.array(y_test)
-
-#     #yaa baata mandatory code    
-#     # Predict using 100 days data
-#     last_day = X_norm[-1].reshape(1, -1)
-#     #x_test_linear_regression = x_test.reshape(x_test.shape[0], -1)
-#     prediction = model.predict(last_day)
-#     st.session_state["prediction"] = prediction
-  
-
-#     #final graph
-#     st.subheader('Predicted vs original for last 100 days')
-#     ax = plt.subplot()
-#     fig3 = plt.figure(figsize=(12,6))
-#     #plt.plot(df_last_100.published_date, df.close)
-#     # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d-%b'))
-#     # ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
-#     plt.plot(prediction,'b', label = 'predicted price')
-#     plt.plot(y, 'r', label = 'original price')
-#     plt.xlabel('Time')
-#     plt.ylabel('Price')
-#     plt.legend()
-#     st.pyplot(fig3)
-#    # st.write(prediction)
-#     st.metric("Predicted Close", f"Rs.{prediction[0]:.2f}")
-
-# if st.button("Predict Closing Price(using LSTM Model)"):
-#     #splitting data into Training and Testing
-#     h.data_training = pd.DataFrame(h.df['close'][0:int(len(h.df)*0.70)])    #[['open','high','low','close','traded_quantity']] for using all OHLCV to train
-#     data_testing = pd.DataFrame(h.df['close'][int(len(h.df)*0.70) : int(len(h.df))])    #or use .iloc as df[[]].iloc(int(len(df)*0.70): )
-
-#     scaler = MinMaxScaler(feature_range = (0,1))
-
-#     data_training_array = scaler.fit_transform(h.data_training)
-
-#     #load the training model (this model is non-linear regression model with RELU activation function)
-#     #model = load_model('LSTM_model')
-
-
-#     #testing part
-#     past_100_days = h.data_training.tail(100)
-#     final_df = pd.concat([past_100_days, data_testing], ignore_index=True)
-#     input_data = scaler.fit_transform(final_df)
-
-#     data = np.array(input_data).astype(float)
-
-
-#     x_test = []
-#     y_test = []
-
-#     for i in range(100,data.shape[0]):
-#         x = data[i-100:i].reshape(100,1)
-#         x_test.append(x)
-#         y_test.append(data[i,0])     #i,0 in sense close column 1st maa xa vanera, here date is 5th col in csv file
-
-#     # st.write(data_training.shape)      2382,1  total
-#     # st.write(final_df.shape)           1121,1   training
-#     # st.write(input_data.shape)         1121,1    training
-#     #st.write(data_testing.shape)         1021,1    testing
-#     #st.write(x_test.shape)   list doesnot have attribute "shape"
-#     #st.write(input_data[:5])
-
-
-#     x_test = np.array(x_test)
-#     y_test = np.array(y_test)
-
-#     #y_predicted = model.predict(x_test)
-#     scaler = scaler.scale_
-
-#     scale_factor = 1/scaler[0]
-#     #y_predicted = y_predicted * scale_factor
-#     y_test = y_test * scale_factor
-
-
-#     # #final graph
-#     # st.subheader('Predicted vs original')
-#     # fig2 = plt.figure(figsize=(12,6))
-#     # plt.plot(y_test,'b', label = 'original price')
-#     # plt.plot(y_predicted,'r', label = 'predicted price')
-#     # plt.xlabel('Time')
-#     # plt.ylabel('Price')
-#     # plt.legend()
-#     # st.pyplot(fig2)
