@@ -78,6 +78,11 @@ if "logged_in" not in st.session_state:
 if "username" not in st.session_state:
     st.session_state.username = ""
 
+if "id" not in st.session_state:
+    st.session_state.id = ""               
+
+user_id = st.session_state.id
+
 #block access if not logged in
 if not st.session_state.logged_in:
 
@@ -97,16 +102,19 @@ st.success(
 predicted_value = f"Rs.{st.session_state['prediction'][0]:.2f}"
 conn = get_connection()
 cur = conn.cursor()
-cur.execute("""
-    INSERT INTO prediction_history
-    (username, stock_name, prediction, requested_at)
-    VALUES (%s, %s, %s, %s)
-""", (
-    st.session_state.username,
-    h.user_input,
-    predicted_value,
-    datetime.now()
-))
+if "prediction_saved" not in st.session_state:
+    cur.execute("""
+        INSERT INTO prediction_history
+        (username, stock_name, prediction, requested_at)
+        VALUES (%s, %s, %s, %s)
+    """, (
+        st.session_state.username,
+        h.user_input,
+        predicted_value,
+        datetime.now()
+    ))
+    st.session_state.prediction_saved = True
+    
 conn.commit()
 cur.close()
 conn.close()
@@ -176,3 +184,24 @@ if history:
 else:
 
     st.info("No prediction history found.")
+
+
+
+
+
+if st.button("Clear History"):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        DELETE FROM prediction_history
+        WHERE username = %s
+        """, (st.session_state.username,))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    st.success("Prediction history deleted")
+    st.rerun()
+
+    

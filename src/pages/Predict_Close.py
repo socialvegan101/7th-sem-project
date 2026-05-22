@@ -120,6 +120,9 @@ if "logged_in" not in st.session_state:
 if "username" not in st.session_state:
     st.session_state.username = ""
 
+if "id" not in st.session_state:
+    st.session_state.id = ""
+
 # custom css
 st.markdown("""
 <style>

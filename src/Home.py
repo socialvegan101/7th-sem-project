@@ -1,25 +1,3 @@
-"""  so whats been completed till now?
-        user ley stock symbol ra date range input dinxa
-        tyo particular date range vitra particular stock symbol ko data fetch hunxa
-        data display hunxa
-        chart haru vayo
-        x axis maa proper date dekhaaune ra y axis maa closing prices dekhaune vayo
-        model ready vayo(linear regression)
-
-        REMAININGS:
-        login page banauna baaki
-
-        should we make another model with RELU activation function?
-        if yes this model will use pre built LSTM model and we'll train it using 5 training layers.
-        this model will have better accuracy than the linear regression model because it will capture the non-linear
-        relationship between the data.
-
-        ABA K GARNE??
-        1. move the codes to the respective files so that it becomes a multiple page application
-        2. profile maa gayera herdaa history dekhaune chaiyo
-        3. predictions store garne DB chaiyo
-
-"""
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
