@@ -337,15 +337,9 @@ elif choice == "Login":
 
             dummy[0,3] = prediction[0]
 
-            prediction = h.scaler.inverse_transform(dummy)
+            actual_price = h.scaler.inverse_transform(dummy)
 
-            pred = st.session_state['prediction'].item()
-
-            prediction = f"Rs.{pred:.2f}"
-
-            st.session_state["prediction"] = prediction[0,3]
-
-
+            prediction = f"Rs.{actual_price[0,3]:.2f}"
             st.metric("Predicted next close:", prediction)
 
         if st.button("Predict Closing Price(using Random Forest Model)"):

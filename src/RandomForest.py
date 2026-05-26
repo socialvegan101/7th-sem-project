@@ -20,4 +20,4 @@ predictions = rf_model.predict(X_test_rf)
 
 mse = mean_squared_error(h.y_test, predictions)
 
-st.write("RF MSE:",mse)
+print("RF MSE:",mse)

@@ -25,7 +25,9 @@ joblib.dump( svm_model, "nepse-data/src/SVM_model.pkl")
 # Prediction
 predictions = svm_model.predict(X_test_svm)
 mse = mean_squared_error(h.y_test, predictions)  
+rmse = np.sqrt(mse)
+print("SVM MSE:",mse)
+print("RMSE:",rmse )
 
-st.write("SVM MSE:",mse)
            
             
