@@ -9,10 +9,10 @@ import Home as h
 import joblib
 import re
 import os
-
-
 import mysql.connector
 import bcrypt
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
 
 # Page configuration
 st.set_page_config(
@@ -274,18 +274,28 @@ elif choice == "Login":
             last_day = X_norm[-1].reshape(1, -1)
             prediction = model.predict(last_day)
             st.session_state["prediction"] = prediction
-        
+            # print(last_day)
 
-            #final graph
-            st.subheader('Predicted vs original for last 100 days')
-            ax = plt.subplot()
-            fig3 = plt.figure(figsize=(12,6))
-            plt.plot(prediction,'b', label = 'predicted price')
-            plt.plot(y, 'r', label = 'original price')
-            plt.xlabel('Time')
-            plt.ylabel('Price')
-            plt.legend()
-            st.pyplot(fig3)
+            # actual_close = h.df.tail(1).close
+            # # print(h.df.tail(1).close)
+            # mse = mean_squared_error(actual_close, prediction)
+            # rmse = np.sqrt(mse)
+            # mae = mean_absolute_error(actual_close, prediction)
+            # r2 = r2_score(actual_close, prediction)
+            # print("MSE:", mse)
+            # print("RMSE:", rmse)
+            # print("MAE:", mae)
+            # print("R2:", r2)
+            # #final graph
+            # st.subheader('Predicted vs original for last 100 days')
+            # ax = plt.subplot()
+            # fig3 = plt.figure(figsize=(12,6))
+            # plt.plot(prediction,'b', label = 'predicted price')
+            # plt.plot(y, 'r', label = 'original price')
+            # plt.xlabel('Time')
+            # plt.ylabel('Price')
+            # plt.legend()
+            # st.pyplot(fig3)
             st.metric("Predicted Close", f"Rs.{prediction[0]:.2f}")
 
         if st.button("Predict Closing Price(using LSTM Model)"):
