@@ -79,9 +79,9 @@ if "username" not in st.session_state:
     st.session_state.username = ""
 
 if "id" not in st.session_state:
-    st.session_state.id = ""               
+    st.session_state.id = ""          
+        
 
-user_id = st.session_state.id
 
 #block access if not logged in
 if not st.session_state.logged_in:

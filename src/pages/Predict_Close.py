@@ -5,7 +5,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import Home as h
-#from keras.models import load_model
+# from keras.models import load_model
+import joblib
+import re
+import os
 
 
 import mysql.connector
@@ -71,7 +74,7 @@ def register_user(username, email, password):
         cur = conn.cursor()
 
         hashed_pw = hash_password(password)
-
+        
         cur.execute("""
             INSERT INTO users (username, email, password)
             VALUES (%s, %s, %s)
@@ -171,19 +174,22 @@ if choice == "Register":
     new_email = st.text_input("Email")
     new_password = st.text_input("Password", type="password")
 
+
     if st.button("Create Account"):
 
         if new_user and new_email and new_password:
+            if not re.match(r'^[a-zA-Z0-9]+$', new_user):
+                st.info("Username can only contain letters and numbers")
+            else:
+                success = register_user(
+                    new_user,
+                    new_email,
+                    new_password
+                )
 
-            success = register_user(
-                new_user,
-                new_email,
-                new_password
-            )
-
-            if success:
-                st.success("Account Created Successfully!")
-                st.info("Go to Login Menu to login.")
+                if success:
+                    st.success("Account Created Successfully!")
+                    st.info("Go to Login Menu to login.")
 
         else:
             st.warning("Please fill all fields.")
@@ -251,7 +257,7 @@ elif choice == "Login":
 
         # Prediction Logic for linear regression model
         st.subheader("Next Day Prediction")
-        if st.button("Predict Closing Price(using linear regression)"):
+        if st.button("Predict Closing Price(using Linear Regression)"):
             # Training on the 100 rows in csv
             df_last_100 = h.df.tail(100)
             X = df_last_100[['open', 'high', 'low', 'traded_quantity']].values
@@ -284,19 +290,17 @@ elif choice == "Login":
 
         if st.button("Predict Closing Price(using LSTM Model)"):
             #splitting data into Training and Testing
-            h.data_training = pd.DataFrame(h.df['close'][0:int(len(h.df)*0.70)])    #[['open','high','low','close','traded_quantity']] for using all OHLCV to train
+            data_training = pd.DataFrame(h.df['close'][0:int(len(h.df)*0.70)])    #[['open','high','low','close','traded_quantity']] for using all OHLCV to train
             data_testing = pd.DataFrame(h.df['close'][int(len(h.df)*0.70) : int(len(h.df))])    #or use .iloc as df[[]].iloc(int(len(df)*0.70): )
 
             scaler = MinMaxScaler(feature_range = (0,1))
 
-            data_training_array = scaler.fit_transform(h.data_training)
+            data_training_array = scaler.fit_transform(data_training)
 
             #load the training model (this model is non-linear regression model with RELU activation function)
-            #model = load_model('LSTM_model')
-
-
+            # model = load_model('LSTM_model')
             #testing part
-            past_100_days = h.data_training.tail(100)
+            past_100_days = data_training.tail(100)
             final_df = pd.concat([past_100_days, data_testing], ignore_index=True)
             input_data = scaler.fit_transform(final_df)
 
@@ -309,38 +313,77 @@ elif choice == "Login":
             for i in range(100,data.shape[0]):
                 x = data[i-100:i].reshape(100,1)
                 x_test.append(x)
-                y_test.append(data[i,0])     #i,0 in sense close column 1st maa xa vanera, here date is 5th col in csv file
-
-            # st.write(data_training.shape)      2382,1  total
-            # st.write(final_df.shape)           1121,1   training
-            # st.write(input_data.shape)         1121,1    training
-            #st.write(data_testing.shape)         1021,1    testing
-            #st.write(x_test.shape)   list doesnot have attribute "shape"
-            #st.write(input_data[:5])
-
-
+                y_test.append(data[i,0]) 
+            
             x_test = np.array(x_test)
             y_test = np.array(y_test)
-
-            #y_predicted = model.predict(x_test)
+            y_predicted = model.predict(h.x_test)
             scaler = scaler.scale_
-
             scale_factor = 1/scaler[0]
-            #y_predicted = y_predicted * scale_factor
+            y_predicted = y_predicted * h.scale_factor
             y_test = y_test * scale_factor
 
 
-            # #final graph
-            # st.subheader('Predicted vs original')
-            # fig2 = plt.figure(figsize=(12,6))
-            # plt.plot(y_test,'b', label = 'original price')
-            # plt.plot(y_predicted,'r', label = 'predicted price')
-            # plt.xlabel('Time')
-            # plt.ylabel('Price')
-            # plt.legend()
-            # st.pyplot(fig2)
+            #final graph
+            st.subheader('Predicted vs original')
+            fig2 = plt.figure(figsize=(12,6))
+            plt.plot(h.y_test,'b', label = 'original price')
+            plt.plot(y_predicted,'r', label = 'predicted price')
+            plt.xlabel('Time')
+            plt.ylabel('Price')
+            plt.legend()
+            st.pyplot(fig2)
+
+        if st.button("Predict Closing Price(using SVM Model)"):
+            model=joblib.load("nepse-data/src/SVM_model.pkl")
+
+            latest_100_days = h.scaled_data[-100:]
+
+            X = np.array([latest_100_days])
+
+            X = X.reshape(X.shape[0], X.shape[1]*X.shape[2])
+
+            prediction = model.predict(X)
+
+            dummy = np.zeros((1,5))
+
+            dummy[0,3] = prediction[0]
+
+            prediction = h.scaler.inverse_transform(dummy)
+
+            pred = st.session_state['prediction'].item()
+
+            prediction = f"Rs.{pred:.2f}"
+
+            st.session_state["prediction"] = prediction[0,3]
+
+
+            st.metric("Predicted next close:", prediction)
+
+        if st.button("Predict Closing Price(using Random Forest Model)"):
+            model=joblib.load("nepse-data/src/RandomForest.pkl")
+
+            latest_100_days = h.scaled_data[-100:]
+
+            X = np.array([latest_100_days])
+
+            X = X.reshape(X.shape[0], X.shape[1]*X.shape[2])
+
+            prediction = model.predict(X)
+
+            dummy = np.zeros((1,5))
+
+            dummy[0,3] = prediction[0]
+
+            actual_price = h.scaler.inverse_transform(dummy)
+            closing = actual_price.flatten()    # yo garna ni mildaina rey!!!!!!!!!!
+
+
+            st.metric("Predicted next close:", closing(2))
+            # st.write(type(actual_price))
 
         if st.button("Logout"):
             st.session_state.logged_in = False
             st.session_state.username = ""
             st.rerun()
+         

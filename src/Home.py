@@ -1,13 +1,13 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import regressionModel as rm
+# import matplotlib.dates as mdates
+# import regressionModel as rm
 import streamlit as st
 import datetime
 from sklearn.preprocessing import MinMaxScaler
 #import plotly.graph_objects as go
-import os
+# import os
 #from keras.models import load_model
 #from pathlib import Path
 
@@ -48,14 +48,16 @@ df.to_csv(f'{user_input}.txt', sep=',', index=False)
 
 
 df["published_date"] = pd.to_datetime(df["published_date"])
+
 df1 = df[df["published_date"].between(start,end)]
-df2 = df.dropna()
+# df2 = df.dropna()
+df2 = df.drop(['published_date'], axis='columns')
 
 st.write(df1)
 
 
 #describing data
-st.write(df.describe())
+st.write(df2.describe())
 
 #Visualizations
 st.subheader("Closing Price vs Time chart")
@@ -100,9 +102,6 @@ st.pyplot(fig)
 
 # data_training_array = scaler.fit_transform(data_training)
 
-# #load the training model (this model is non-linear regression model with RELU activation function)
-# #model = load_model('LSTM_model')
-
 
 # #testing part
 # past_100_days = data_training.tail(100)
@@ -131,21 +130,53 @@ st.pyplot(fig)
 # x_test = np.array(x_test)
 # y_test = np.array(y_test)
 
-# #y_predicted = model.predict(x_test)
 # scaler = scaler.scale_
 
 # scale_factor = 1/scaler[0]
-# #y_predicted = y_predicted * scale_factor
 # y_test = y_test * scale_factor
 
 
-# # #final graph
-# # st.subheader('Predicted vs original')
-# # fig2 = plt.figure(figsize=(12,6))
-# # plt.plot(y_test,'b', label = 'original price')
-# # plt.plot(y_predicted,'r', label = 'predicted price')
-# # plt.xlabel('Time')
-# # plt.ylabel('Price')
-# # plt.legend()
-# # st.pyplot(fig2)
+
+
+# # Load data
+# df = pd.read_csv("stock_data.csv")
+
+# # Sort by date
+# df = df.sort_values('Date')
+
+# Select features
+data = df[['open','high','low','close','traded_quantity']]
+
+# Normalize
+scaler = MinMaxScaler()
+scaled_data = scaler.fit_transform(data)
+
+X = []
+y = []
+
+window_size = 100
+
+for i in range(window_size, len(scaled_data)):
+
+    # Previous 100 days
+    X.append(scaled_data[i-window_size:i])
+
+    # Next day close price
+    y.append(scaled_data[i,3])  
+    # Close column index = 3
+
+X = np.array(X)
+y = np.array(y)
+
+# print(X.shape)
+# print(y.shape)
+
+
+train_size = int(len(X)*0.8)
+
+X_train = X[:train_size]
+X_test = X[train_size:]
+
+y_train = y[:train_size]
+y_test = y[train_size:]
 
