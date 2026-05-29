@@ -228,25 +228,10 @@ elif choice == "Login":
             f"Welcome {st.session_state.username} "
         )
 
-        st.subheader("💎 Premium Features")
 
         st.markdown("""
         <div class="feature-card">
-            <h4>📈 Advanced Analytics</h4>
-            <p>Premium market insights and data.</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-        <div class="feature-card">
-            <h4>AI Predictions</h4>
-            <p>AI-powered forecasting tools.</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-        <div class="feature-card">
-            <h4>🔒 Exclusive Premium Content</h4>
+            <h4>Exclusive Feature</h4>
             <p>Only accessible to logged-in users.</p>
         </div>
         """, unsafe_allow_html=True)
