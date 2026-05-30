@@ -1,7 +1,7 @@
 import numpy as np
 
 
-# # --- Custom Linear Regression (From Scratch) ---
+# Custom Linear Regression (From Scratch) 
 class CustomLinearRegression:
     def __init__(self, lr=0.01, iterations=1000):
         self.lr = lr
@@ -36,7 +36,7 @@ class CustomLinearRegression:
         if X.ndim == 1:
             X = X.reshape(1, -1)
 
-        # safety check (prevents your exact error)
+        # safety check 
         if X.shape[1] != self.n_features:
             raise ValueError(
                 f"Feature mismatch! Model expects {self.n_features}, "
